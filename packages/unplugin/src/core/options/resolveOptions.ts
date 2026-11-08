@@ -6,6 +6,7 @@ const defaultOptions: ResolvedTtscUnpluginOptions = {
   plugins: undefined,
   project: undefined,
   projectRoot: undefined,
+  filter: undefined,
 };
 
 /**
@@ -53,5 +54,6 @@ export function resolveOptions(
     plugins: "plugins" in options ? options.plugins : defaultOptions.plugins,
     project: options.project ?? defaultOptions.project,
     projectRoot: options.projectRoot ?? defaultOptions.projectRoot,
+    filter: options.filter ?? defaultOptions.filter,
   };
 }

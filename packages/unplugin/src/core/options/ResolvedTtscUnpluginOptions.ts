@@ -60,4 +60,7 @@ export interface ResolvedTtscUnpluginOptions {
    * directory.
    */
   projectRoot?: string;
+
+  /** Filters which modules the bundler adapter's transformations apply to. */
+  filter?: RegExp | RegExp[];
 }

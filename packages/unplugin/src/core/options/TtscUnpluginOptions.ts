@@ -86,4 +86,7 @@ export interface TtscUnpluginOptions {
    * an array overrides the project plugin list.
    */
   plugins?: readonly ITtscProjectPluginConfig[] | false;
+
+  /** Filters which modules the bundler adapter's transformations apply to. */
+  filter?: RegExp | RegExp[];
 }

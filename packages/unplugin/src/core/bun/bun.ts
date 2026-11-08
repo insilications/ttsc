@@ -4,6 +4,7 @@ import { isTransformTarget } from "../isTransformTarget";
 import type { TtscUnpluginOptions } from "../options/TtscUnpluginOptions";
 import { resolveOptions } from "../options/resolveOptions";
 import { bunTypeScriptTransformSourcePattern } from "../source/bunTypeScriptTransformSourcePattern";
+import { filterTransformTarget } from "../source/filterTransformTarget";
 import { typescriptTransformBunLoader } from "../source/typescriptTransformBunLoader";
 import { beginTtscTransformBuild } from "../transform/cache/beginTtscTransformBuild";
 import { createTtscTransformCache } from "../transform/cache/createTtscTransformCache";
@@ -114,6 +115,13 @@ export function bun(options?: TtscBunOptions): BunLikePlugin {
       build.onLoad(
         { filter: bunTypeScriptTransformSourcePattern },
         async (args) => {
+          const transformOptions = getOptions();
+          if (
+            transformOptions.filter &&
+            !filterTransformTarget(transformOptions.filter, args.path)
+          ) {
+            return undefined;
+          }
           if (!runtime && ownsInMemoryFile(args.path)) {
             return undefined;
           }
@@ -125,7 +133,6 @@ export function bun(options?: TtscBunOptions): BunLikePlugin {
             };
           }
           const loader = bunLoaderFor(args.path);
-          const transformOptions = getOptions();
           const source = await fs.readFile(args.path, "utf8");
           // Bun has no dependency subscription API or reusable build result
           // cache. Builds are one-shot; runtime registration owns one immutable
@@ -151,6 +158,7 @@ export function bun(options?: TtscBunOptions): BunLikePlugin {
           if (result !== undefined) {
             return { contents: inlineSourceMap(result), loader };
           }
+
           return runtime ? { contents: source, loader } : undefined;
         },
       );
